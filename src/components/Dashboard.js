@@ -1,8 +1,8 @@
 import React, {useEffect , useState, useRef} from 'react';
-import firestore from '../firebase'
+import fb from '../firebase/firebase'
 import Chart from './Chart'
 
-function Dashboard() {
+function Dashboard(props) {
 
   const [ gyroX, gyroXSet ] = useState([])
   const [ gyroY, gyroYSet ] = useState([])
@@ -24,40 +24,81 @@ function Dashboard() {
     setAccLoop( x )
   }
 
+  const logout = (e) => {
+    e.preventDefault()
+    fb.auth().signOut();
+  }
+
+  const remove = () =>{
+    fb.firestore().collection("Gyroscope").get()
+    .then(res=>{
+      let data = res.docs
+      let idArrayGyro = []
+      data.forEach(doc=>{
+        idArrayGyro.push(doc.id)
+      })
+      idArrayGyro.forEach(id=>{
+        fb.firestore().collection("Gyroscope").doc(id).delete()
+      })
+
+      fb.firestore().collection("Accelerometer").get()
+    .then(res=>{
+      let data = res.docs
+      let idArray = []
+      data.forEach(doc=>{
+        idArray.push(doc.id)
+      })
+      idArray.forEach(id=>{
+        fb.firestore().collection("Accelerometer").doc(id).delete()
+      })
+    })
+
+    })
+  }
+
   useEffect(()=>{
-    firestore
+
+    fb.firestore()
     .collection('Gyroscope')
     .orderBy('dataTime')
     .onSnapshot((snapshot)=>{
-      console.log(gyroLoopRef.current)
       if(!snapshot.empty){
           let documents = snapshot.docs
           documents.slice(gyroLoopRef.current).forEach(doc=>{
             let data = doc.data()
-            
-            gyroXSet( (currentData)=>[...currentData, {time:parseFloat(data.dataTime.toFixed(1)) , value: parseFloat(data.xValue)} ] )
-            gyroYSet( (currentData)=>[...currentData, {time:parseFloat(data.dataTime.toFixed(1)) , value: parseFloat(data.yValue)} ] )
-            gyroZSet( (currentData)=>[...currentData, {time:parseFloat(data.dataTime.toFixed(1)) , value: parseFloat(data.zValue)} ] )
+            gyroXSet( (currentData)=>[...currentData,  data.xtime] )
+            gyroYSet( (currentData)=>[...currentData,  data.ytime] )
+            gyroZSet( (currentData)=>[...currentData,  data.ztime] )
           })
         setGyroLoopRef( gyroLoopRef.current + 1 )
       }
     })
 
-    firestore
+    fb.firestore()
     .collection('Accelerometer')
     .orderBy('dataTime')
     .onSnapshot((snapshot)=>{
+      console.log(snapshot)
       if(!snapshot.empty){
           let documents = snapshot.docs
           documents.slice(accLoopRef.current).forEach(doc=>{
             let data = doc.data()
-            accXSet( (currentData)=>[...currentData, {time:parseFloat(data.dataTime.toFixed(1)) , value: parseFloat(data.xValue)} ] )
-            accYSet( (currentData)=>[...currentData, {time:parseFloat(data.dataTime.toFixed(1)) , value: parseFloat(data.yValue)} ] )
-            accZSet( (currentData)=>[...currentData, {time:parseFloat(data.dataTime.toFixed(1)) , value: parseFloat(data.zValue)} ] )
+            console.log(data.xtime)
+            accXSet( (currentData)=>[...currentData, data.xtime ] )
+            accYSet( (currentData)=>[...currentData, data.ytime ] )
+            accZSet( (currentData)=>[...currentData, data.ztime ] )
           })
           setAccLoopRef(accLoopRef.current+1)
       }
     })
+
+    // fb.firestore()
+    // .collection('experiments')
+    // .doc('Experiment Name')
+    // .collection("Accelerometer")
+    // .onSnapshot((snapshot)=>{
+    //   console.log(snapshot)
+    // })
 
   }, [])
 
@@ -74,22 +115,27 @@ function Dashboard() {
       flexDirection:"column",
       justifyContent:"flex-start",
       alignItems:"center",
+      width:"50%",
+      height:"50%"
     }
   }
 
 
+
   return (
     <div style={styles.mainBody}>
+        {/* <button onClick={logout} >LOGOUT</button> */}
+        {/* <button onClick={remove}> Delete firestore </button> */}
         <div style={styles.displayColumn} >
-          <Chart  key={"gyroX"} data={gyroX} xAxisKey={"time"} yAxisKey={"value"} />
-          <Chart key={"gyroY"} data={gyroY} xAxisKey={"time"} yAxisKey={"value"} />
-          <Chart key={"gyroZ"} data={gyroZ} xAxisKey={"time"} yAxisKey={"value"} />
+          <Chart key={"gyroX"} data={gyroX} xAxisKey={"time"} yAxisKey={"value"} />
+          {/* <Chart key={"gyroY"} data={gyroY} xAxisKey={"time"} yAxisKey={"value"} />
+          <Chart key={"gyroZ"} data={gyroZ} xAxisKey={"time"} yAxisKey={"value"} /> */}
         </div>
-        <div style={styles.displayColumn} >
+        {/* <div style={styles.displayColumn} >
           <Chart key={"accX"} data={accX} xAxisKey={"time"} yAxisKey={"value"} />
           <Chart key={"accY"} data={accY} xAxisKey={"time"} yAxisKey={"value"} />
           <Chart key={"accZ"} data={accZ} xAxisKey={"time"} yAxisKey={"value"} />
-        </div>
+        </div>  */}
     </div>
   );
 }

@@ -5,17 +5,40 @@ import {
     browserHistory,
     Route
 } from "react-router-dom"
-import App from "./components/App"
+import Login from "./components/Login"
 import Dashboard from "./components/Dashboard"
+import fb from"./firebase/firebase"
 
 
-const Routing = () => {
+function Routing(){
+
+    const [userData , setUser] = React.useState(null)
+
+    const authListener = () => {
+        fb.auth().onAuthStateChanged(user=>{
+            if(user){
+                setUser(user)
+            }else{
+                setUser(null)
+            }
+        })
+    }
+
+    React.useEffect(()=>{
+        authListener()
+    },[])
 
     return(
-        <BrowserRouter >
-            <Route exact path={'/'}  component={ Dashboard } />
-            <Route exact path={'/HOME'}  component={App} />
-        </BrowserRouter>
+        <div>
+            {
+                userData ? <Dashboard/> 
+                : <Login/>
+            }
+        </div>
+        // <BrowserRouter >
+        //     <Route exact path={'/'} render={(props) => <Dashboard {...props} auth={userData} />} />
+        //     <Route exact path={'/login'}  component={Login} />
+        // </BrowserRouter>
     )
 
 } 

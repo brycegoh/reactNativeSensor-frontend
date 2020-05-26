@@ -5,9 +5,11 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid
+  CartesianGrid,
+  ReferenceLine,
+  ResponsiveContainer
 } from 'recharts'
-
+// import {VictoryLine, VictoryChart} from 'victory'
 const Chart = (props) => {
 
     let {
@@ -17,12 +19,29 @@ const Chart = (props) => {
     } = props
 
     return(
-        <LineChart width={550} height={200} data={data}>
+      <ResponsiveContainer width="100%" height={200} >
+        <LineChart width={550} height={200} data={data} margin={{top:5,right:30,left:20,bottom:5}}>
           <XAxis dataKey={xAxisKey} />
-          <YAxis/>
-          <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-          <Line type="monotone" dataKey={yAxisKey} stroke="#8884d8" />
+          <YAxis allowDataOverflow={true} domain={[-2,5]} />
+          <CartesianGrid stroke="#eee" strokeDasharray="3 3"/>
+          <Line type="monotone" dataKey={yAxisKey} stroke="#8884d8" activeDot={{x:8}} />
+          <ReferenceLine y={0}  stroke="red" strokeDasharray="3 3" />
+          <Line type="monotone" dataKey={yAxisKey} stroke="#8884d8" activeDot={{x:8}} />
         </LineChart>
+      </ResponsiveContainer>
+        
+        // <VictoryChart>
+        //   <VictoryLine
+        //     style={{ data: { stroke: "red" } }}
+        //     samples = {data.length}
+        //     data={data}
+        //     x={xAxisKey}
+        //     y={yAxisKey}
+        //     scale={{x: "linear", y: "time"}}
+        //     height={500}
+        //     width={1000}
+        //   />
+        // </VictoryChart>
     )
 }
 
