@@ -7,23 +7,50 @@ function Dashboard(props) {
   const [ gyroX, gyroXSet ] = useState([])
   const [ gyroY, gyroYSet ] = useState([])
   const [ gyroZ, gyroZSet ] = useState([])
+  const [ gyroMin, setGyroMin ] = useState(-0.1)
+  const [ gyroMax, setGyroMax ] = useState(0.1) 
+  const gyroMaxRef = useRef(gyroMax)
+  const setGyroMaxRef = (x)=>{
+    gyroMaxRef.current = x
+    setGyroMax(x)
+  }
+  const gyroMinRef = useRef(gyroMin)
+  const setGyroMinRef = (x)=>{
+    gyroMinRef.current = x
+    setGyroMin(x)
+  }
+
   const [ gyroLoop, setGyroLoop ] = useState(0)
   const gyroLoopRef = useRef(gyroLoop)
   const setGyroLoopRef = (x) => {
     gyroLoopRef.current = x
     setGyroLoop( x )
   }
-
+//--------------------acc states------------------
   const [ accX, accXSet ] = useState([])
   const [ accY, accYSet ] = useState([])
   const [ accZ, accZSet ] = useState([])
+//------------acc domain---------------------
+  const [ accMin, setAccMin ] = useState(-0.1)
+  const [ accMax, setAccMax ] = useState(0.1) 
+  const accMaxRef = useRef(accMax)
+  const setAccMaxRef = (x)=>{
+    accMaxRef.current = x
+    setAccMax(x)
+  }
+  const accMinRef = useRef(accMin)
+  const setAccMinRef = (x)=>{
+    accMinRef.current = x
+    setAccMin(x)
+  }
+//------acc loop-----------------------------
   const [ accLoop, setAccLoop ] = useState(0)
   const accLoopRef = useRef(accLoop)
   const setAccLoopRef = (x) => {
     accLoopRef.current = x
     setAccLoop( x )
   }
-
+//--------------------------------------------
   const logout = (e) => {
     e.preventDefault()
     fb.auth().signOut();
@@ -66,6 +93,15 @@ function Dashboard(props) {
           let documents = snapshot.docs
           documents.slice(gyroLoopRef.current).forEach(doc=>{
             let data = doc.data()
+            let valArray = [ parseFloat(data.xtime.value), parseFloat(data.ytime.value), parseFloat(data.ztime.value) ].sort((a,b)=>a-b)
+            let minValue = valArray[0]
+            let maxValue = valArray[ 2 ]
+            if( minValue < gyroMinRef.current ){
+              setGyroMinRef( minValue )
+            }
+            if( maxValue > gyroMaxRef.current ){
+              setGyroMaxRef( maxValue )
+            }
             gyroXSet( (currentData)=>[...currentData,  data.xtime] )
             gyroYSet( (currentData)=>[...currentData,  data.ytime] )
             gyroZSet( (currentData)=>[...currentData,  data.ztime] )
@@ -83,10 +119,31 @@ function Dashboard(props) {
           let documents = snapshot.docs
           documents.slice(accLoopRef.current).forEach(doc=>{
             let data = doc.data()
-            console.log(data.xtime)
+            let valArray = [ parseFloat(data.xtime.value), parseFloat(data.ytime.value), parseFloat(data.ztime.value) ].sort((a,b)=>a-b)
+            console.log(`-----------------${accLoopRef.current}---------------------------------`)
+            console.log(valArray)
+            let minValue = valArray[0]
+            let maxValue = valArray[ 2 ]
+            console.log(`-----------------incoming min`)
+            console.log(accMinRef.current)
+            console.log(minValue)
+            console.log(`-----------------incoming max`)
+            console.log(accMaxRef.current)
+            console.log(maxValue)
+            if( minValue < accMinRef.current ){
+              setAccMinRef( minValue )
+            }
+            if( maxValue > accMaxRef.current ){
+              setAccMaxRef( maxValue )
+            }
+            console.log(`-----------------set min`)
+            console.log(accMinRef.current)
+            console.log(`-----------------set min`)
+            console.log(accMaxRef.current)
             accXSet( (currentData)=>[...currentData, data.xtime ] )
             accYSet( (currentData)=>[...currentData, data.ytime ] )
             accZSet( (currentData)=>[...currentData, data.ztime ] )
+            console.log(`-----------------${accLoopRef.current}---------------------------------`)
           })
           setAccLoopRef(accLoopRef.current+1)
       }
@@ -127,15 +184,15 @@ function Dashboard(props) {
         {/* <button onClick={logout} >LOGOUT</button> */}
         {/* <button onClick={remove}> Delete firestore </button> */}
         <div style={styles.displayColumn} >
-          <Chart key={"gyroX"} data={gyroX} xAxisKey={"time"} yAxisKey={"value"} />
-          {/* <Chart key={"gyroY"} data={gyroY} xAxisKey={"time"} yAxisKey={"value"} />
-          <Chart key={"gyroZ"} data={gyroZ} xAxisKey={"time"} yAxisKey={"value"} /> */}
+          <Chart key={"gyroX"} data={gyroX} xAxisKey={"time"} yAxisKey={"value"} yMin={gyroMin} yMax={gyroMax} />
+          <Chart key={"gyroY"} data={gyroY} xAxisKey={"time"} yAxisKey={"value"} yMin={gyroMin} yMax={gyroMax} />
+          <Chart key={"gyroZ"} data={gyroZ} xAxisKey={"time"} yAxisKey={"value"} yMin={gyroMin} yMax={gyroMax} />
         </div>
-        {/* <div style={styles.displayColumn} >
-          <Chart key={"accX"} data={accX} xAxisKey={"time"} yAxisKey={"value"} />
-          <Chart key={"accY"} data={accY} xAxisKey={"time"} yAxisKey={"value"} />
-          <Chart key={"accZ"} data={accZ} xAxisKey={"time"} yAxisKey={"value"} />
-        </div>  */}
+        <div style={styles.displayColumn} >
+          <Chart key={"accX"} data={accX} xAxisKey={"time"} yAxisKey={"value"} yMin={accMin} yMax={accMax} />
+          <Chart key={"accY"} data={accY} xAxisKey={"time"} yAxisKey={"value"} yMin={accMin} yMax={accMax} />
+          <Chart key={"accZ"} data={accZ} xAxisKey={"time"} yAxisKey={"value"} yMin={accMin} yMax={accMax} />
+        </div> 
     </div>
   );
 }
