@@ -1,6 +1,7 @@
 import React, {useEffect , useState, useRef} from 'react';
 import fb from '../firebase/firebase'
 import Chart from './Chart'
+import { Button } from 'antd';
 
 function Dashboard(props) {
 
@@ -114,36 +115,36 @@ function Dashboard(props) {
     .collection('Accelerometer')
     .orderBy('dataTime')
     .onSnapshot((snapshot)=>{
-      console.log(snapshot)
+      // console.log(snapshot)
       if(!snapshot.empty){
           let documents = snapshot.docs
           documents.slice(accLoopRef.current).forEach(doc=>{
             let data = doc.data()
             let valArray = [ parseFloat(data.xtime.value), parseFloat(data.ytime.value), parseFloat(data.ztime.value) ].sort((a,b)=>a-b)
-            console.log(`-----------------${accLoopRef.current}---------------------------------`)
-            console.log(valArray)
+            // console.log(`-----------------${accLoopRef.current}---------------------------------`)
+            // console.log(valArray)
             let minValue = valArray[0]
             let maxValue = valArray[ 2 ]
-            console.log(`-----------------incoming min`)
-            console.log(accMinRef.current)
-            console.log(minValue)
-            console.log(`-----------------incoming max`)
-            console.log(accMaxRef.current)
-            console.log(maxValue)
+            // console.log(`-----------------incoming min`)
+            // console.log(accMinRef.current)
+            // console.log(minValue)
+            // console.log(`-----------------incoming max`)
+            // console.log(accMaxRef.current)
+            // console.log(maxValue)
             if( minValue < accMinRef.current ){
               setAccMinRef( minValue )
             }
             if( maxValue > accMaxRef.current ){
               setAccMaxRef( maxValue )
             }
-            console.log(`-----------------set min`)
-            console.log(accMinRef.current)
-            console.log(`-----------------set min`)
-            console.log(accMaxRef.current)
-            accXSet( (currentData)=>[...currentData, data.xtime ] )
-            accYSet( (currentData)=>[...currentData, data.ytime ] )
-            accZSet( (currentData)=>[...currentData, data.ztime ] )
-            console.log(`-----------------${accLoopRef.current}---------------------------------`)
+            // console.log(`-----------------set min`)
+            // console.log(accMinRef.current)
+            // console.log(`-----------------set min`)
+            // console.log(accMaxRef.current)
+            // accXSet( (currentData)=>[...currentData, data.xtime ] )
+            // accYSet( (currentData)=>[...currentData, data.ytime ] )
+            // accZSet( (currentData)=>[...currentData, data.ztime ] )
+            // console.log(`-----------------${accLoopRef.current}---------------------------------`)
           })
           setAccLoopRef(accLoopRef.current+1)
       }
@@ -165,15 +166,15 @@ function Dashboard(props) {
       display: 'flex',
       flexDirection:"row", 
       justifyContent:"space-around",
-      alignItems:"space-around"
+      alignItems:"space-around",
     },
     displayColumn:{
       display: 'flex',
       flexDirection:"column",
       justifyContent:"flex-start",
       alignItems:"center",
-      width:"50%",
-      height:"50%"
+      width:"45%",
+      height:"30%"
     }
   }
 
@@ -181,18 +182,17 @@ function Dashboard(props) {
 
   return (
     <div style={styles.mainBody}>
-        {/* <button onClick={logout} >LOGOUT</button> */}
-        {/* <button onClick={remove}> Delete firestore </button> */}
-        <div style={styles.displayColumn} >
-          <Chart key={"gyroX"} data={gyroX} xAxisKey={"time"} yAxisKey={"value"} yMin={gyroMin} yMax={gyroMax} />
-          <Chart key={"gyroY"} data={gyroY} xAxisKey={"time"} yAxisKey={"value"} yMin={gyroMin} yMax={gyroMax} />
-          <Chart key={"gyroZ"} data={gyroZ} xAxisKey={"time"} yAxisKey={"value"} yMin={gyroMin} yMax={gyroMax} />
-        </div>
-        <div style={styles.displayColumn} >
-          <Chart key={"accX"} data={accX} xAxisKey={"time"} yAxisKey={"value"} yMin={accMin} yMax={accMax} />
-          <Chart key={"accY"} data={accY} xAxisKey={"time"} yAxisKey={"value"} yMin={accMin} yMax={accMax} />
-          <Chart key={"accZ"} data={accZ} xAxisKey={"time"} yAxisKey={"value"} yMin={accMin} yMax={accMax} />
-        </div> 
+      <Button style={{position:"fixed", top:10,right:10, zIndex:99}} type="primary" onClick={logout} >LOGOUT</Button>
+      <div style={styles.displayColumn} >
+        <Chart label={"Gyroscope X - time Graph"} key={"gyroX"} data={gyroX} xAxisKey={"time"} yAxisKey={"value"} yMin={gyroMin} yMax={gyroMax} />
+        <Chart label={"Gyroscope Y - time Graph"} key={"gyroY"} data={gyroY} xAxisKey={"time"} yAxisKey={"value"} yMin={gyroMin} yMax={gyroMax} />
+        <Chart label={"Gyroscope Z - time Graph"} key={"gyroZ"} data={gyroZ} xAxisKey={"time"} yAxisKey={"value"} yMin={gyroMin} yMax={gyroMax} />
+      </div>
+      <div style={styles.displayColumn} >
+        <Chart label={"Accelerometer X - time Graph"} key={"accX"} data={accX} xAxisKey={"time"} yAxisKey={"value"} yMin={accMin} yMax={accMax} />
+        <Chart label={"Accelerometer Y - time Graph"} key={"accY"} data={accY} xAxisKey={"time"} yAxisKey={"value"} yMin={accMin} yMax={accMax} />
+        <Chart label={"Accelerometer Z - time Graph"} key={"accZ"} data={accZ} xAxisKey={"time"} yAxisKey={"value"} yMin={accMin} yMax={accMax} />
+      </div> 
     </div>
   );
 }

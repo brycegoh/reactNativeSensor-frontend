@@ -1,5 +1,7 @@
 import React from 'react';
 import fb from '../firebase/firebase'
+import { Input, Button } from 'antd';
+import { AreaChartOutlined } from '@ant-design/icons'
 
 function Login() {
 
@@ -22,16 +24,40 @@ function Login() {
     .catch(e=>console.log(e.message))
   }
 
+  const styles = {
+    mainBody:{
+      display: 'flex',
+      flexDirection:"column", 
+      justifyContent:"center",
+      alignItems:"center",
+      width:"100vw",
+      height:"100vh"
+    },
+    displayRow:{
+      display: 'flex',
+      flexDirection:"row",
+      justifyContent:"center",
+      alignItems:"center",
+      margin:5
+    }
+  }
 
   return (
-    <div>
+    <div style={styles.mainBody} >
+      <div style={styles.displayRow}>
+        <AreaChartOutlined  style={{ fontSize: '50px' }} theme="outlined" />
+        <div> Team 3 Phone Sensor Logger </div>
+        </div>
       <form onSubmit={login} >
-        <label for="ExmapleInputEmail">Email</label>
-        <input value={email} type="email" name="email" placeholder="Email Address" onChange={emailChange} />
-
-        <label for="ExmapleInputPass">Pass</label>
-        <input value={pass} type="password" name="password" placeholder="Password" onChange={passChange} />
-        <button type="submit" >LOGIN</button>
+        <div style={styles.displayRow}>
+          <Input value={email} type="email" name="email" placeholder="Email" onChange={emailChange} />
+        </div>
+        <div style={styles.displayRow}>
+          <Input value={pass} type="password" name="password" placeholder="Password" onChange={passChange} />
+        </div>
+        <div style={styles.displayRow}>
+          <Button type="primary" onClick={login} >LOGIN</Button>
+        </div>
       </form>
     </div>
   );

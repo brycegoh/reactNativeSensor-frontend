@@ -9,10 +9,13 @@ import {
   ReferenceLine,
   ResponsiveContainer
 } from 'recharts'
+import { Card } from 'antd';
+
 // import {VictoryLine, VictoryChart} from 'victory'
 const Chart = (props) => {
 
     let {
+        label,
         data,
         xAxisKey,
         yAxisKey,
@@ -21,16 +24,19 @@ const Chart = (props) => {
     } = props
 
     return(
-      <ResponsiveContainer width="100%" height={200} >
-        <LineChart width={550} height={200} data={data} margin={{top:5,right:30,left:20,bottom:5}}>
-          <XAxis dataKey={xAxisKey} />
-          <YAxis allowDecimals={false} scale={"linear"} allowDataOverflow={false} domain={[yMin-1,yMax+1]} />
-          <CartesianGrid stroke="#eee" strokeDasharray="3 3" margin={{top:5,right:30,left:20,bottom:5}} />
-          <Line type="monotone" dataKey={yAxisKey} stroke="#8884d8" activeDot={{x:8}} />
-          <ReferenceLine y={0}  stroke="red" strokeDasharray="3 3" />
-          <Line type="monotone" dataKey={yAxisKey} stroke="#8884d8" activeDot={{x:8}} />
-        </LineChart>
-      </ResponsiveContainer>
+      <Card title={label} bordered={false} style={{ width: "100%"}}>
+          <ResponsiveContainer width="100%" height={200} >
+          <LineChart width={550} height={200} data={data} margin={{top:5,right:30,left:20,bottom:5}}>
+            <XAxis dataKey={xAxisKey} />
+            <YAxis allowDecimals={false} scale={"linear"} allowDataOverflow={false} domain={[yMin-1,yMax+1]} />
+            <CartesianGrid stroke="#eee" strokeDasharray="3 3" margin={{top:5,right:30,left:20,bottom:5}} />
+            <Line type="monotone" dataKey={yAxisKey} stroke="#8884d8" activeDot={{x:8}} />
+            <ReferenceLine y={0}  stroke="red" strokeDasharray="3 3" />
+            <Line type="monotone" dataKey={yAxisKey} stroke="#8884d8" activeDot={{x:8}} />
+          </LineChart>
+        </ResponsiveContainer>
+      </Card>
+      
         
         // <VictoryChart>
         //   <VictoryLine
