@@ -1,1 +1,1 @@
-#React Native Sensor Logger Prototype with using expo-sensors
+# React Native Sensor Logger Prototype with using expo-sensors
